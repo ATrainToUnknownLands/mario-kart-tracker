@@ -1,0 +1,123 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <title>New Session</title>
+</head>
+<body>
+    <h1>New Session</h1>
+    <div>
+        <input type="radio" name="game_version" id="mk8" value="mk8_form">
+        <label for="mk8">Mario Kart 8 Deluxe</label>
+        <input type="radio" name="game_version" id="mk_world" value="mk_world_form">
+        <label for="mk8">Mario Kart World</label>
+        <div id="mk8_form" class="session_form">
+            <form name="session-setup" action="" method="post">
+                <fieldset name="mk8-setup">
+                    <legend>Session Settings</legend>
+                    <label for="mk8-choice">Track Choice</label>
+                    <input type="text" name="track-choice" id="mk8-track-choice"><br>
+                    <label for="mk8-cc">CC</label>
+                    <input type="text" name="cc" id="mk8-cc"><br>
+                    <label for="mk8-item-rules">Item Rules</label>
+                    <input type="text" name="item-rules" id="mk8-item-rules"><br>
+                    <label for="mk8-difficulty">COM Difficulty</label>
+                    <input type="text" name="difficulty" id="mk8-difficulty"><br>
+                    <label for="mk8-no-players">No. Players</label>
+                    <input type="number" name="no-players" id="mk8-no-players"><br>
+                    <label for="mk8-no-races">No. Races</label>
+                    <input type="number" name="no-races" id="mk8-no-races">
+                </fieldset>
+            </form>
+        </div>
+        <div id="mk_world_form" class="session_form">
+            <form name="session-setup" action="" method="post">
+                <fieldset name="mk-world-setup">
+                    <legend>Session Settings</legend>
+                    <label for="mk-world-track-choice">Track Choice</label>
+                    <input type="text" name="track-choice" id="mk-world-track-choice"><br>
+                    <label for="mk-world-cc">CC</label>
+                    <input type="text" name="cc" id="mk-world-cc"><br>
+                    <label for="mk-world-item-rules">Item Rules</label>
+                    <input type="text" name="item-rules" id="mk-world-item-rules"><br>
+                    <label for="mk-world-difficulty">COM Difficulty</label>
+                    <input type="text" name="difficulty" id="mk-world-difficulty"><br>
+                    <label for="mk-world-no-players">No. Players</label>
+                    <input type="number" name="no-players" id="mk-world-no-players"><br>
+                    <label for="mk-world-no-races">No. Races</label>
+                    <input type="number" name="no-races" id="mk-world-no-races">
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</body>
+
+{% include "./datalists.html" %}
+
+<script>
+    $(document).ready(function() {
+        $("div.session_form").hide()
+        
+        // Show the appropriate game's settings form when selected
+        $("input[name$='game_version']").click(function() {
+            var selected_game = $(this).val();
+            $("div.session_form").hide();
+            $("#" + selected_game).show();
+        });
+
+        // Add the appropriate number of player settings boxes
+        $("#mk-world-no-players").on('change', function() {
+            add_player_fieldsets(this, "mk_world")
+        })
+        $("#mk8-no-players").on('change', function() {
+            add_player_fieldsets(this, "mk8")
+        })
+    });
+
+    function add_player_fieldsets(input_element, game_version) {
+        // Limit to only 4 players
+        var no_players = Math.min($(input_element).val(), 4)
+
+        // Reset the input in case it's > 4
+        $(input_element).val(no_players)
+
+        // Clear any existing fieldsets
+        $("fieldset[name$='player-settings']").remove()
+
+        for(let p = 0; p < no_players; p++){
+            player_no = p + 1
+            var html = ''
+            
+            if(game_version == "mk8") {
+                html = `<fieldset name="player-settings">
+                    <legend>Player Settings: Player ${player_no}</legend>
+                    <label for="mk8-player${player_no}">Player</label>
+                    <select name="player-select" id="mk8-player${player_no}">
+                        <option value="Person 1">Person 1</option>
+                    </select><br>
+                    <label for="mk8-player${player_no}-character">Character</label>
+                    <input type="text" name="player${player_no}-character" id="mk8-player${player_no}-character" list="mk8-characters"><br>
+                    <label for="mk8-player${player_no}-vehicle">Vehicle</label>
+                    <input type="text" name="player${player_no}-vehicle" id="mk8-player${player_no}-vehicle" list="mk8-vehicles">
+                </fieldset>`
+            }
+            else if(game_version == "mk_world") {
+                html = `<fieldset name="player-settings">
+                    <label for="mk-world-player${player_no}">Player</label>
+                    <select name="player-select" id="mk-world-player${player_no}">
+                        <option value="Person 1">Person 1</option>
+                    </select><br>
+                    <legend>Player Settings: Player ${player_no}</legend>
+                    <label for="mk-world-player${player_no}-character">Character</label>
+                    <input type="text" name="player${player_no}-character" id="mk-world-player${player_no}-character" list="mk-world-characters"><br>
+                    <label for="mk-world-player${player_no}-vehicle">Vehicle</label>
+                    <input type="text" name="player${player_no}-vehicle" id="mk-world-player${player_no}-vehicle" list="mk-world-vehicles">
+                </fieldset>`
+            }
+
+            $("form[name$='session-setup']").append(html)
+        }
+    }
+</script>
+</html>

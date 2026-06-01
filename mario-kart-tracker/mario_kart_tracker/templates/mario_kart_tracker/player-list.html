@@ -1,0 +1,23 @@
+<h1>Players</h1>
+{% if player_list %}
+
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Player</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for player in player_list %}
+            <tr>
+                <td><a href="../player/{{ player.player_id }}/">{{ player.name }}</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+No players saved
+{% endif %}
+<a href="../player/">
+    <button type="button">New Player</button>
+</a>

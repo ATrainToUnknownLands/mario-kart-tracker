@@ -1,0 +1,36 @@
+
+<datalist id="mk8-characters">
+    {% for character in mk8.characters %}
+        <option id="character-{{ forloop.counter }}" value="{{ character.name }}">{{ character.name }}</option>
+    {% endfor %}
+</datalist>
+<datalist id="mk8-vehicles">
+    {% for vehicle in mk8.vehicles %}
+    <!-- Use the name rather than the id, as the name is unique to the game -->
+    <option id="vehicle-{{ forloop.counter }}" value="{{ vehicle.name }}">{{ vehicle.name }}</option>
+    {% endfor %}
+</datalist>
+<datalist id="mk8-wheels">
+    {% for wheel in mk8.wheels %}
+    <!-- Use the name rather than the id, as the name is unique to the game -->
+    <option id="wheel-{{ forloop.counter }}" value="{{ wheel.name }}">{{ wheel.name }}</option>
+    {% endfor %}
+</datalist>
+<datalist id="mk8-gliders">
+    {% for glider in mk8.gliders %}
+    <!-- Use the name rather than the id, as the name is unique to the game -->
+    <option id="glider-{{ forloop.counter }}" value="{{ glider.name }}">{{ glider.name }}</option>
+    {% endfor %}
+</datalist>
+<datalist id="mk-world-characters">
+    {% for character in mk_world.characters %}
+    <!-- Use the name rather than the id, as the name is unique to the game -->
+    <option id="character-{{ forloop.counter }}" value="{{ character.name }}">{{ character.name }}</option>
+    {% endfor %}
+</datalist>
+<datalist id="mk-world-vehicles">
+    {% for vehicle in mk_world.vehicles %}
+    <!-- Use the name rather than the id, as the name is unique to the game -->
+    <option id="vehicle-{{ forloop.counter }}" value="{{ vehicle.name }}">{{ vehicle.name }}</option>
+    {% endfor %}
+</datalist>

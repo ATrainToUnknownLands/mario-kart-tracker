@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <title>Player Setup</title>
+</head>
+    <body>
+        {% if player %} 
+            <h1>Edit Player: {{ player.name }} </h1> 
+        {% else %}
+            <h1>New Player</h1>
+        {% endif %}
+        <div>
+            <form id="form-player-details" action="{% url 'mk-tracker:save-player' %}" method="post">
+                {% csrf_token %}
+                <fieldset>
+                    <label for="player-name">Name</label>
+                    <input type="text" id="player-name" name="player-name" value="{% if player %}{{ player.name }}{% else %}{% endif %}">
+                    <input type="submit" value="Save">
+                </fieldset>
+            </form>
+            {% if player %}
+                <form id="form-mk8-defaults" action="{% url "mk-tracker:save-player-default" %}" method="post">
+                {% csrf_token %}
+                    <fieldset>
+                        <input type="hidden" name="default-game" value="{{ mk8.game_version_id }}">
+                        <input type="hidden" name="default-player" value="{{ player.player_id }}">
+                        <label for="mk8-default-character">Character</label>
+                        {% if defaults_mk8.character %}
+                            <input type="text" name="default-character" id="mk8-default-character" value="{{ defaults_mk8.character.name }}" list="mk8-characters"/>
+                        {% else %}
+                            <input type="text" name="default-character" id="mk8-default-character" list="mk8-characters"/>
+                        {% endif %}
+                        <br>
+                        <label for="mk8-default-vehicle">Vehicle</label>
+                        {% if defaults_mk8.vehicle %}
+                            <input type="text" name="default-vehicle" id="mk8-default-vehicle" value="{{ defaults_mk8.vehicle.name }}" list="mk8-vehicles"/>
+                        {% else %}
+                            <input type="text" name="default-vehicle" id="mk8-default-vehicle" list="mk8-vehicles"/>
+                        {% endif %}
+                        <br>
+                        <label for="mk8-default-wheel">Wheel</label>
+                        {% if defaults_mk8.wheel %}
+                            <input type="text" name="default-wheel" id="mk8-default-wheel" value="{{ defaults_mk8.wheel.name }}" list="mk8-wheels"/>
+                        {% else %}
+                            <input type="text" name="default-wheel" id="mk8-default-wheel" list="mk8-wheels"/>
+                        {% endif %}
+                        <br>
+                        <label for="mk8-default-glider">Glider</label>
+                        {% if defaults_mk8.glider %}
+                            <input type="text" name="default-glider" id="mk8-default-glider" value="{{ defaults_mk8.glider.name }}" list="mk8-gliders"/>
+                        {% else %}
+                            <input type="text" name="default-glider" id="mk8-default-glider" list="mk8-gliders"/>
+                        {% endif %}
+                        <br>
+                        <input type="submit" value="Save">
+                    </fieldset>
+                </form>
+                <form id="form-mk-world-defaults" action="{% url "mk-tracker:save-player-default" %}" method="post">
+                {% csrf_token %}
+                    <fieldset>
+                        <input type="hidden" name="default-game" value="{{ mk_world.game_version_id }}">
+                        <input type="hidden" name="default-player" value="{{ player.player_id }}">
+                        <label for="mk-world-default-character">Character</label>
+                        {% if defaults_mk_world.character %}
+                            <input type="text" name="default-character" id="mk-world-default-character" value="{{ defaults_mk_world.character.name }}" list="mk-world-characters"/>
+                        {% else %}
+                            <input type="text" name="default-character" id="mk-world-default-character" list="mk-world-characters"/>
+                        {% endif %}
+                        <br>
+                        <label for="mk-world-default-vehicle">Vehicle</label>
+                        {% if defaults_mk_world.vehicle %}
+                            <input type="text" name="default-vehicle" id="mk-world-default-vehicle" value="{{ defaults_mk_world.vehicle.name }}" list="mk-world-vehicles"/>
+                        {% else %}
+                            <input type="text" name="default-vehicle" id="mk-world-default-vehicle" list="mk-world-vehicles"/>
+                        {% endif %}
+                        <br>
+                        <input type="submit" value="Save">
+                    </fieldset>
+                </form>
+            {% endif %}
+        </div>
+        {% include "./datalists.html" %}
+    </body>
+</html>
