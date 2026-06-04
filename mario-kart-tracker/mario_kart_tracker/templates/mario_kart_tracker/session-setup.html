@@ -1,8 +1,10 @@
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="{% static 'mario_kart_tracker/session-setup.js' %}"></script>
     <title>New Session</title>
 </head>
 <body>
@@ -13,17 +15,41 @@
         <input type="radio" name="game_version" id="mk_world" value="mk_world_form">
         <label for="mk8">Mario Kart World</label>
         <div id="mk8_form" class="session_form">
-            <form name="session-setup" action="" method="post">
+            <form 
+                id="mk8-session-setup" 
+                name="session-setup" 
+                action="{% url "mk-tracker:save-session" %}" 
+                method="post">
+                {% csrf_token %}
                 <fieldset name="mk8-setup">
                     <legend>Session Settings</legend>
-                    <label for="mk8-choice">Track Choice</label>
-                    <input type="text" name="track-choice" id="mk8-track-choice"><br>
+                    <input type="hidden" name="game_version" value="{{ mk8.game_version_id }}">
+                    <label for="mk8-track-choice">Track Choice</label>
+                    <select name="track-choice" id="mk8-track-choice">
+                        {% for track_choice in mk8.track_modes %}
+                        <option id="track-choice-{{ forloop.counter }}" value="{{ track_choice.course_selection_id }}">{{ track_choice.name }}</option>
+                        {% endfor %}
+                    </select><br>
                     <label for="mk8-cc">CC</label>
-                    <input type="text" name="cc" id="mk8-cc"><br>
-                    <label for="mk8-item-rules">Item Rules</label>
-                    <input type="text" name="item-rules" id="mk8-item-rules"><br>
+                    <select name="cc" id="mk8-cc">
+                        {% for class in mk8.engine_classes %}
+                        <option id="class-{{ forloop.counter }}" value="{{ class.engine_class_id }}">{{ class.name }}</option>
+                        {% endfor %}
+                    </select><br>
+                    <label for="mk8-teams">No. Teams</label>
+                    <input type="number" name="no-teams" id="mk8-teams"><br>
+                    <label for="mk8-item-rule">Item Rules</label>
+                    <select name="item-rule" id="mk8-item-rule">
+                        {% for rule in mk8.item_rules %}
+                        <option id="rule-{{ forloop.counter }}" value="{{ rule.item_rule_id }}">{{ rule.name }}</option>
+                        {% endfor %}
+                    </select><br>
                     <label for="mk8-difficulty">COM Difficulty</label>
-                    <input type="text" name="difficulty" id="mk8-difficulty"><br>
+                    <select name="difficulty" id="mk8-difficulty">
+                        {% for difficulty in mk8.cpu_difficulties %}
+                        <option id="difficulty-{{ forloop.counter }}" value="{{ difficulty.cpu_difficulty_id }}">{{ difficulty.name }}</option>
+                        {% endfor %}
+                    </select><br>
                     <label for="mk8-no-players">No. Players</label>
                     <input type="number" name="no-players" id="mk8-no-players"><br>
                     <label for="mk8-no-races">No. Races</label>
@@ -32,17 +58,41 @@
             </form>
         </div>
         <div id="mk_world_form" class="session_form">
-            <form name="session-setup" action="" method="post">
+            <form 
+                id="mk-world-session-setup" 
+                name="session-setup" 
+                action="{% url "mk-tracker:save-session" %}" 
+                method="post">
+                {% csrf_token %}
                 <fieldset name="mk-world-setup">
                     <legend>Session Settings</legend>
+                    <input type="hidden" name="game_version" value="{{ mk_world.game_version_id }}">
                     <label for="mk-world-track-choice">Track Choice</label>
-                    <input type="text" name="track-choice" id="mk-world-track-choice"><br>
+                    <select name="track-choice" id="mk-world-track-choice">
+                        {% for track_choice in mk_world.track_modes %}
+                        <option id="track-choice-{{ forloop.counter }}" value="{{ track_choice.course_selection_id }}">{{ track_choice.name }}</option>
+                        {% endfor %}
+                    </select><br>
                     <label for="mk-world-cc">CC</label>
-                    <input type="text" name="cc" id="mk-world-cc"><br>
-                    <label for="mk-world-item-rules">Item Rules</label>
-                    <input type="text" name="item-rules" id="mk-world-item-rules"><br>
+                    <select name="cc" id="mk-world-cc">
+                        {% for class in mk_world.engine_classes %}
+                        <option id="class-{{ forloop.counter }}" value="{{ class.engine_class_id }}">{{ class.name }}</option>
+                        {% endfor %}
+                    </select><br>
+                    <label for="mk-world-teams">No. Teams</label>
+                    <input type="number" name="no-teams" id="mk-world-teams"><br>
+                    <label for="mk-world-item-rule">Item Rules</label>
+                    <select name="item-rule" id="mk-world-item-rule">
+                        {% for rule in mk_world.item_rules %}
+                        <option id="rule-{{ forloop.counter }}" value="{{ rule.item_rule_id }}">{{ rule.name }}</option>
+                        {% endfor %}
+                    </select><br>
                     <label for="mk-world-difficulty">COM Difficulty</label>
-                    <input type="text" name="difficulty" id="mk-world-difficulty"><br>
+                    <select name="difficulty" id="mk-world-difficulty">
+                        {% for difficulty in mk_world.cpu_difficulties %}
+                        <option id="difficulty-{{ forloop.counter }}" value="{{ difficulty.cpu_difficulty_id }}">{{ difficulty.name }}</option>
+                        {% endfor %}
+                    </select><br>
                     <label for="mk-world-no-players">No. Players</label>
                     <input type="number" name="no-players" id="mk-world-no-players"><br>
                     <label for="mk-world-no-races">No. Races</label>
@@ -55,69 +105,11 @@
 
 {% include "./datalists.html" %}
 
-<script>
-    $(document).ready(function() {
-        $("div.session_form").hide()
-        
-        // Show the appropriate game's settings form when selected
-        $("input[name$='game_version']").click(function() {
-            var selected_game = $(this).val();
-            $("div.session_form").hide();
-            $("#" + selected_game).show();
-        });
+<datalist id="player-list">
+    {% for player in players %}
+    <option value="{{ player.player_id }}">{{ player.name }}</option>
+    {% endfor %}
+</datalist>
 
-        // Add the appropriate number of player settings boxes
-        $("#mk-world-no-players").on('change', function() {
-            add_player_fieldsets(this, "mk_world")
-        })
-        $("#mk8-no-players").on('change', function() {
-            add_player_fieldsets(this, "mk8")
-        })
-    });
 
-    function add_player_fieldsets(input_element, game_version) {
-        // Limit to only 4 players
-        var no_players = Math.min($(input_element).val(), 4)
-
-        // Reset the input in case it's > 4
-        $(input_element).val(no_players)
-
-        // Clear any existing fieldsets
-        $("fieldset[name$='player-settings']").remove()
-
-        for(let p = 0; p < no_players; p++){
-            player_no = p + 1
-            var html = ''
-            
-            if(game_version == "mk8") {
-                html = `<fieldset name="player-settings">
-                    <legend>Player Settings: Player ${player_no}</legend>
-                    <label for="mk8-player${player_no}">Player</label>
-                    <select name="player-select" id="mk8-player${player_no}">
-                        <option value="Person 1">Person 1</option>
-                    </select><br>
-                    <label for="mk8-player${player_no}-character">Character</label>
-                    <input type="text" name="player${player_no}-character" id="mk8-player${player_no}-character" list="mk8-characters"><br>
-                    <label for="mk8-player${player_no}-vehicle">Vehicle</label>
-                    <input type="text" name="player${player_no}-vehicle" id="mk8-player${player_no}-vehicle" list="mk8-vehicles">
-                </fieldset>`
-            }
-            else if(game_version == "mk_world") {
-                html = `<fieldset name="player-settings">
-                    <label for="mk-world-player${player_no}">Player</label>
-                    <select name="player-select" id="mk-world-player${player_no}">
-                        <option value="Person 1">Person 1</option>
-                    </select><br>
-                    <legend>Player Settings: Player ${player_no}</legend>
-                    <label for="mk-world-player${player_no}-character">Character</label>
-                    <input type="text" name="player${player_no}-character" id="mk-world-player${player_no}-character" list="mk-world-characters"><br>
-                    <label for="mk-world-player${player_no}-vehicle">Vehicle</label>
-                    <input type="text" name="player${player_no}-vehicle" id="mk-world-player${player_no}-vehicle" list="mk-world-vehicles">
-                </fieldset>`
-            }
-
-            $("form[name$='session-setup']").append(html)
-        }
-    }
-</script>
 </html>

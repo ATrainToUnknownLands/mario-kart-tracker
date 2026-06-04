@@ -6,6 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.utils import timezone
 
 
 class GameVersion(models.Model):
@@ -282,7 +283,10 @@ class Session(models.Model):
         on_delete=models.DO_NOTHING, 
         db_comment='The Mario Kart version that was played during this session'
     )
-    play_date = models.DateTimeField(db_comment='The date-time at which the session was played')
+    play_date = models.DateTimeField(
+        db_comment='The date-time at which the session was played',
+        default=timezone.now
+    )
     is_complete = models.BooleanField(blank=True, null=True, db_comment='Whether the session was completed. False indicates either that the session is not finished or was finished early. Defaults to `false` then updated on completion')
     no_races = models.IntegerField(db_comment='The number of races that were selected to be played in the session (regardless of how many were actually completed)')
     engine_class = models.ForeignKey(

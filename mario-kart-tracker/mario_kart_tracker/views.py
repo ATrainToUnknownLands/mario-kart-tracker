@@ -89,8 +89,6 @@ def save_player_default(request):
     else:
         selected_glider = selected_glider.first()
 
-    print(type(selected_character))
-
     defaults, created = PlayerDefault.objects.update_or_create(
         game_version=game_version, player=player,
         defaults={
@@ -105,7 +103,106 @@ def save_player_default(request):
 
 
 def session_setup(request):
-    return HttpResponse()
+    context = {}
+
+    for game in GameVersion.objects.all():
+        key_name = game.short_name
+        context[key_name] = get_game_context(game)
+
+        # Get the Course Selection Mode, Item Rules, Engine Classes, and Difficulties
+        context[key_name]["track_modes"] = CourseSelection.objects.filter(game_version=game)
+        context[key_name]["item_rules"] = ItemRule.objects.filter(game_version=game)
+        context[key_name]["engine_classes"] = EngineClass.objects.filter(game_version=game)
+        context[key_name]["cpu_difficulties"] = CpuDifficulty.objects.filter(game_version=game)
+
+    players = Player.objects.all()
+
+    context["players"] = players
+
+    return render(request, "mario_kart_tracker/session-setup.html", context)
+
+'''
+Start a new VS Session. Get all the details and save to the database
+'''
+def start_new_session(request):
+    # Get the form responses
+    game            = GameVersion.objects.get(pk=request.POST.get("game_version"))
+    no_players      = request.POST.get("no-players")
+    track_choice    = CourseSelection.objects.get(pk=request.POST.get("track-choice"))
+    engine_class    = EngineClass.objects.get(pk=request.POST.get("cc"))
+    item_rule       = ItemRule.objects.get(pk=request.POST.get("item-rule"))
+    com_difficulty  = CpuDifficulty.objects.get(pk=request.POST.get("difficulty"))
+    no_races        = request.POST.get("no-races")
+    no_teams        = request.POST.get("no-teams")
+
+    new_session = Session(
+        no_players = no_players,
+        game_version = game,
+        no_races = no_races,
+        engine_class = engine_class,
+        teams = no_teams,
+        item_rule = item_rule,
+        cpu_difficulty = com_difficulty,
+        course_selection = track_choice
+    )
+
+    new_session.save()
+    player_session_ids = []
+
+    for player_no in range(1, int(no_players) + 1):
+        player = Player.objects.get(pk=request.POST.get(f"player-select{player_no}"))
+        selected_character = Character.objects.filter(
+            game_version=game,
+            name=request.POST.get(f"player{player_no}-character")
+        )
+        if len(selected_character) > 1:
+            raise ValueError("Only one selection is allowed")
+        else:
+            selected_character = selected_character.first()
+
+        selected_vehicle = Vehicle.objects.filter(
+            game_version=game,
+            name=request.POST.get(f"player{player_no}-vehicle")
+        )
+        if len(selected_vehicle) > 1:
+            raise ValueError("Only one selection is allowed")
+        else:
+            selected_vehicle = selected_vehicle.first()
+        
+        selected_wheel = Wheel.objects.filter(
+            game_version=game,
+            name=request.POST.get(f"player{player_no}-wheel")
+        )
+        if len(selected_wheel) > 1:
+            raise ValueError("Only one selection is allowed")
+        else:
+            selected_wheel = selected_wheel.first()
+        
+        selected_glider = Glider.objects.filter(
+            game_version=game,
+            name=request.POST.get(f"player{player_no}-glider")
+        )
+        if len(selected_glider) > 1:
+            raise ValueError("Only one selection is allowed")
+        else:
+            selected_glider = selected_glider.first()
+
+        
+        player_session = PlayerSession(
+            session = new_session,
+            player = player,
+            character = selected_character,
+            vehicle = selected_vehicle,
+            wheel = selected_wheel,
+            glider = selected_glider
+        )
+
+        player_session.save()
+
+        player_session_ids.append(player_session.player_session_id)
+
+    return HttpResponse(f"New session started! id: {new_session.session_id}, player session ids: {player_session_ids}")
+
 
 
 def get_player_defaults(request):
