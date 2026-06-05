@@ -1,0 +1,40 @@
+<html lang="en">
+    <head>
+        {% load static %}    
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <title>Race No. {{ race_no }}</title>
+    </head>
+    <body>
+        <form action="{% url "mk-tracker:save-race" %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="session" value="{{ session.session_id }}">
+            <input type="hidden" name="race-no" value="{{ race_no }}">
+            <label for="start-track">
+                {% if session.game_version.name == "Mario Kart 8 Deluxe" %}
+                    Track
+                {% elif session.game_version.name == "Mario Kart World" %}
+                    Starting Track
+                {% endif %}
+            </label>
+            <input type="text" name="start-track" id="start-race-track" list="tracks"><br>
+            {% if session.game_version.name == "Mario Kart World" %}
+                <label for="start-track">Ending Track</label>
+                <input type="text" name="end-track" id="end-race-track" list="tracks">
+            {% endif %}
+            {% for player in players %}
+                <br>
+                <label for="player-{{ player.player_id }}-position">{{ player.name }}</label>
+                <input type="number" name="player-{{ player.player_id }}-position" id="player-{{ player.player_id }}-position">
+            {% endfor %}
+            <input type="submit" value="Next">
+        </form>
+    </body>
+
+    <datalist id="tracks">
+        {% for track in tracks %}
+            <option value="{{ track.name }}">{{ track.name }}</option>
+        {% endfor %}
+    </datalist>
+</html>

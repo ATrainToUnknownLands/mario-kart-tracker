@@ -77,3 +77,5 @@ function add_player_fieldsets(input_element, game_version) {
     submit_button = `<input type="submit" value="Start">`
     $("form[name$='session-setup']").append(submit_button)
 }
+
+// TODO: When the selected player is changed, get defaults

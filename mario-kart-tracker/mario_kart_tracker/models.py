@@ -371,14 +371,14 @@ class Race(models.Model):
         db_comment='The session of which the race is a part'
     )
     race_no = models.IntegerField(db_comment='The race number within the session')
-    start_track_id = models.ForeignKey(
+    start_track = models.ForeignKey(
         to=Track, 
         related_name='as_start_track',
         db_column='start_track_id',
         on_delete=models.DO_NOTHING, 
         db_comment='The starting track of the race (MK World) or the track on which the race is done (MK 8)',
     )
-    end_track_id = models.ForeignKey(
+    end_track = models.ForeignKey(
         to=Track, 
         related_name='as_end_track',
         db_column='end_track_id',

@@ -121,6 +121,10 @@ def session_setup(request):
 
     return render(request, "mario_kart_tracker/session-setup.html", context)
 
+
+# TODO: Create view for returning player defaults
+
+
 '''
 Start a new VS Session. Get all the details and save to the database
 '''
@@ -201,8 +205,90 @@ def start_new_session(request):
 
         player_session_ids.append(player_session.player_session_id)
 
+    # TODO: Find out about managing transactions in Django
+    # TODO: Redirect to the first race entry page
+    return HttpResponseRedirect(f"../session/{new_session.session_id}/1")
     return HttpResponse(f"New session started! id: {new_session.session_id}, player session ids: {player_session_ids}")
 
+
+def race_entry(request, session_id, race_no):
+    print(f"session_id: {session_id}, race_no: {race_no}")
+
+    # Get the tracks for the game being played
+    session = Session.objects.get(pk=session_id)
+    tracks = Track.objects.filter(game_version=session.game_version)
+
+    # Get the players
+    players = PlayerSession.objects.filter(session=session)
+    players = [player_session.player for player_session in players]
+
+    # Get the positions
+    positions = Position.objects.filter(game_version=session.game_version)
+
+    # Assemble the context
+    context = {
+        "race_no": race_no,
+        "session": session,
+        "tracks": tracks,
+        "players": players,
+        "positions": positions
+    }
+
+    # Return the rendered page
+    return render(request, "mario_kart_tracker/race-entry.html", context)
+
+
+import re
+
+
+def save_race_results(request):
+    # Get the session
+    session = Session.objects.get(pk=request.POST.get("session"))
+
+    # Get the track(s)
+    start_track = Track.objects.filter(
+        game_version = session.game_version,
+        name = request.POST.get("start-track")
+    ).first()
+    end_track = Track.objects.filter(
+        game_version = session.game_version,
+        name = request.POST.get("end-track")
+    ).first()
+
+    # Save the race
+    race = Race(
+        session = session,
+        race_no = request.POST.get("race-no"),
+        start_track = start_track,
+        end_track = end_track
+    )
+
+    # TODO: Check Django's transaction processing
+    race.save()
+
+    # For each player, get their position
+    for form_item in list(request.POST.items()):
+        if re.match(r"player-\d+-position", form_item[0]):
+            player_id = re.search(r"\d+", form_item[0]).group()
+            player = Player.objects.get(pk=int(player_id))
+            result = Position.objects.filter(
+                game_version = session.game_version,
+                position = int(form_item[1])
+            ).first()
+            if not result:
+                ValueError("No position found")
+            
+            # Save the player results
+            race_result = RaceResult(
+                race = race,
+                player = player,
+                position = result
+            )
+
+            race_result.save()
+    
+    return HttpResponse("Race Saved")
+    
 
 
 def get_player_defaults(request):
@@ -215,11 +301,3 @@ def get_player_defaults(request):
     )
 
     return defaults
-
-
-def race_entry(request, session_id, race_no):
-    response = f'''
-<h1>Enter Race Results</h1>
-<p>Session: {session_id}, Race No.: {race_no}
-'''
-    return HttpResponse(response)

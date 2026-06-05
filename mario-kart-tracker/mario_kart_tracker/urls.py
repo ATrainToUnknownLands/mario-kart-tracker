@@ -13,5 +13,6 @@ urlpatterns = [
     path("session/", views.session_setup, name="new-session"),
     path("save-session", views.start_new_session, name="save-session"),
     path("session/<int:session_id>/", views.session_setup, name="session-setup"),
-    path("session/<int:session_id>/<int:race_no>", views.race_entry, name="race-entry")
+    path("session/<int:session_id>/<int:race_no>", views.race_entry, name="race-entry"),
+    path("save_race", views.save_race_results, name="save-race")
 ]
