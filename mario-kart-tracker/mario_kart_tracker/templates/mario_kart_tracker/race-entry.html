@@ -21,13 +21,13 @@
             <input type="text" name="start-track" id="start-race-track" list="tracks"><br>
             {% if session.game_version.name == "Mario Kart World" %}
                 <label for="start-track">Ending Track</label>
-                <input type="text" name="end-track" id="end-race-track" list="tracks">
+                <input type="text" name="end-track" id="end-race-track" list="tracks"><br>
             {% endif %}
             {% for player in players %}
-                <br>
                 <label for="player-{{ player.player_id }}-position">{{ player.name }}</label>
-                <input type="number" name="player-{{ player.player_id }}-position" id="player-{{ player.player_id }}-position">
+                <input type="number" name="player-{{ player.player_id }}-position" id="player-{{ player.player_id }}-position"><br>
             {% endfor %}
+            <!-- TODO: Implement a "previous" button -->
             <input type="submit" value="Next">
         </form>
     </body>

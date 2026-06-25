@@ -10,9 +10,9 @@
 <body>
     <h1>New Session</h1>
     <div>
-        <input type="radio" name="game_version" id="mk8" value="mk8_form">
+        <input type="radio" name="game_version" id="mk8" value="mk8">
         <label for="mk8">Mario Kart 8 Deluxe</label>
-        <input type="radio" name="game_version" id="mk_world" value="mk_world_form">
+        <input type="radio" name="game_version" id="mk_world" value="mk_world">
         <label for="mk8">Mario Kart World</label>
         <div id="mk8_form" class="session_form">
             <form 
@@ -107,6 +107,7 @@
 {% include "./datalists.html" %}
 
 <datalist id="player-list">
+    <option hidden disabled selected value></option>
     {% for player in players %}
     <option value="{{ player.player_id }}">{{ player.name }}</option>
     {% endfor %}

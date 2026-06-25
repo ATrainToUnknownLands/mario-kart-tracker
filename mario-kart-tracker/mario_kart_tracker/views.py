@@ -1,10 +1,15 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
+from django.db import transaction
+from django.forms.models import model_to_dict
 
 from .models import *
 from .utils import *
 
-# Create your views here.
+import re
+
+# TODO: implement form verification
+
 def index(request):
     return HttpResponse("Hello World. This is the Mario Kart Tracker index!")
 
@@ -55,39 +60,22 @@ def save_player_default(request):
     selected_character = Character.objects.filter(
         game_version=game_version,
         name=request.POST.get("default-character")
-    )
-    # BUT! we need to verify that only one is returned - just in case
-    if len(selected_character) > 1:
-        raise ValueError("Only one selection is allowed")
-    else:
-        selected_character = selected_character.first()
+    ).first()
 
     selected_vehicle = Vehicle.objects.filter(
         game_version=game_version,
         name=request.POST.get("default-vehicle")
-    )
-    if len(selected_vehicle) > 1:
-        raise ValueError("Only one selection is allowed")
-    else:
-        selected_vehicle = selected_vehicle.first()
+    ).first()
     
     selected_wheel = Wheel.objects.filter(
         game_version=game_version,
         name=request.POST.get("default-wheel")
-    )
-    if len(selected_wheel) > 1:
-        raise ValueError("Only one selection is allowed")
-    else:
-        selected_wheel = selected_wheel.first()
+    ).first()
     
     selected_glider = Glider.objects.filter(
         game_version=game_version,
         name=request.POST.get("default-glider")
-    )
-    if len(selected_glider) > 1:
-        raise ValueError("Only one selection is allowed")
-    else:
-        selected_glider = selected_glider.first()
+    ).first()
 
     defaults, created = PlayerDefault.objects.update_or_create(
         game_version=game_version, player=player,
@@ -122,12 +110,10 @@ def session_setup(request):
     return render(request, "mario_kart_tracker/session-setup.html", context)
 
 
-# TODO: Create view for returning player defaults
-
-
 '''
 Start a new VS Session. Get all the details and save to the database
 '''
+@transaction.atomic
 def start_new_session(request):
     # Get the form responses
     game            = GameVersion.objects.get(pk=request.POST.get("game_version"))
@@ -158,38 +144,22 @@ def start_new_session(request):
         selected_character = Character.objects.filter(
             game_version=game,
             name=request.POST.get(f"player{player_no}-character")
-        )
-        if len(selected_character) > 1:
-            raise ValueError("Only one selection is allowed")
-        else:
-            selected_character = selected_character.first()
+        ).first()
 
         selected_vehicle = Vehicle.objects.filter(
             game_version=game,
             name=request.POST.get(f"player{player_no}-vehicle")
-        )
-        if len(selected_vehicle) > 1:
-            raise ValueError("Only one selection is allowed")
-        else:
-            selected_vehicle = selected_vehicle.first()
+        ).first()
         
         selected_wheel = Wheel.objects.filter(
             game_version=game,
             name=request.POST.get(f"player{player_no}-wheel")
-        )
-        if len(selected_wheel) > 1:
-            raise ValueError("Only one selection is allowed")
-        else:
-            selected_wheel = selected_wheel.first()
+        ).first()
         
         selected_glider = Glider.objects.filter(
             game_version=game,
             name=request.POST.get(f"player{player_no}-glider")
-        )
-        if len(selected_glider) > 1:
-            raise ValueError("Only one selection is allowed")
-        else:
-            selected_glider = selected_glider.first()
+        ).first()
 
         
         player_session = PlayerSession(
@@ -205,10 +175,7 @@ def start_new_session(request):
 
         player_session_ids.append(player_session.player_session_id)
 
-    # TODO: Find out about managing transactions in Django
-    # TODO: Redirect to the first race entry page
     return HttpResponseRedirect(f"../session/{new_session.session_id}/1")
-    return HttpResponse(f"New session started! id: {new_session.session_id}, player session ids: {player_session_ids}")
 
 
 def race_entry(request, session_id, race_no):
@@ -238,12 +205,17 @@ def race_entry(request, session_id, race_no):
     return render(request, "mario_kart_tracker/race-entry.html", context)
 
 
-import re
-
-
+'''
+Save the results of a particular race.
+Saves the track(s) on which the race occurred, and the results for each player
+'''
+@transaction.atomic
 def save_race_results(request):
     # Get the session
     session = Session.objects.get(pk=request.POST.get("session"))
+
+    # Get the race no.
+    race_no = int(request.POST.get("race-no"))
 
     # Get the track(s)
     start_track = Track.objects.filter(
@@ -258,12 +230,10 @@ def save_race_results(request):
     # Save the race
     race = Race(
         session = session,
-        race_no = request.POST.get("race-no"),
+        race_no = race_no,
         start_track = start_track,
         end_track = end_track
     )
-
-    # TODO: Check Django's transaction processing
     race.save()
 
     # For each player, get their position
@@ -286,18 +256,36 @@ def save_race_results(request):
             )
 
             race_result.save()
-    
-    return HttpResponse("Race Saved")
+
+    # If there are any more races to go
+    if race_no < session.no_races:
+        # Continue to the next race
+        return HttpResponseRedirect(f"../session/{session.session_id}/{race_no + 1}")
+    else:
+        # Otherwise, mark the session as finished
+        session.is_complete = True
+        session.save()
+
+        # Then send the user to the finished screen
+        return HttpResponse("Session completed. Thanks for playing!")
     
 
 
 def get_player_defaults(request):
-    player_id = request.GET.get('player')
-    game_version_id = request.GET.get('game')
+    player_id = request.GET.get('player_id')
+    game_version_name = request.GET.get('game_version')
+
+    game_version = GameVersion.objects.filter(short_name = game_version_name).first()
 
     defaults = PlayerDefault.objects.filter(
         player_id = player_id,
-        game_version_id = game_version_id
-    )
+        game_version = game_version
+    ).first()
 
-    return defaults
+    if defaults:
+        defaults = model_to_dict(defaults, fields=["character", "vehicle", "wheel", "glider"])
+    else:
+        print("No defaults")
+        raise Http404("No defaults for this game for this player")
+    
+    return JsonResponse(defaults, safe=False)
