@@ -17,7 +17,7 @@
         <div id="mk8_form" class="session_form">
             <form 
                 id="mk8-session-setup" 
-                name="session-setup" 
+                name="session-setup"
                 action="{% url "mk-tracker:save-session" %}" 
                 method="post">
                 {% csrf_token %}
@@ -25,43 +25,43 @@
                     <legend>Session Settings</legend>
                     <input type="hidden" name="game_version" value="{{ mk8.game_version_id }}">
                     <label for="mk8-track-choice">Track Choice</label>
-                    <select name="track-choice" id="mk8-track-choice">
+                    <select name="track-choice" id="mk8-track-choice" required>
                         {% for track_choice in mk8.track_modes %}
                         <option id="track-choice-{{ forloop.counter }}" value="{{ track_choice.course_selection_id }}">{{ track_choice.name }}</option>
                         {% endfor %}
                     </select><br>
                     <!-- TODO: Add in vehicle options -->
                     <label for="mk8-cc">CC</label>
-                    <select name="cc" id="mk8-cc">
+                    <select name="cc" id="mk8-cc" required>
                         {% for class in mk8.engine_classes %}
                         <option id="class-{{ forloop.counter }}" value="{{ class.engine_class_id }}">{{ class.name }}</option>
                         {% endfor %}
                     </select><br>
                     <label for="mk8-teams">No. Teams</label>
-                    <input type="number" name="no-teams" id="mk8-teams"><br>
+                    <input type="number" name="no-teams" id="mk8-teams" value=0 required><br>
                     <label for="mk8-item-rule">Item Rules</label>
-                    <select name="item-rule" id="mk8-item-rule">
+                    <select name="item-rule" id="mk8-item-rule" required>
                         {% for rule in mk8.item_rules %}
                         <option id="rule-{{ forloop.counter }}" value="{{ rule.item_rule_id }}">{{ rule.name }}</option>
                         {% endfor %}
                     </select><br>
                     <label for="mk8-difficulty">COM Difficulty</label>
-                    <select name="difficulty" id="mk8-difficulty">
+                    <select name="difficulty" id="mk8-difficulty" required>
                         {% for difficulty in mk8.cpu_difficulties %}
                         <option id="difficulty-{{ forloop.counter }}" value="{{ difficulty.cpu_difficulty_id }}">{{ difficulty.name }}</option>
                         {% endfor %}
                     </select><br>
                     <label for="mk8-no-players">No. Players</label>
-                    <input type="number" name="no-players" id="mk8-no-players"><br>
+                    <input type="number" name="no-players" id="mk8-no-players" min=1 max=4 required><br>
                     <label for="mk8-no-races">No. Races</label>
-                    <input type="number" name="no-races" id="mk8-no-races">
+                    <input type="number" name="no-races" id="mk8-no-races" min=1 required>
                 </fieldset>
             </form>
         </div>
         <div id="mk_world_form" class="session_form">
             <form 
                 id="mk-world-session-setup" 
-                name="session-setup" 
+                name="session-setup"
                 action="{% url "mk-tracker:save-session" %}" 
                 method="post">
                 {% csrf_token %}
@@ -69,35 +69,35 @@
                     <legend>Session Settings</legend>
                     <input type="hidden" name="game_version" value="{{ mk_world.game_version_id }}">
                     <label for="mk-world-track-choice">Track Choice</label>
-                    <select name="track-choice" id="mk-world-track-choice">
+                    <select name="track-choice" id="mk-world-track-choice" required>
                         {% for track_choice in mk_world.track_modes %}
                         <option id="track-choice-{{ forloop.counter }}" value="{{ track_choice.course_selection_id }}">{{ track_choice.name }}</option>
                         {% endfor %}
                     </select><br>
                     <label for="mk-world-cc">CC</label>
-                    <select name="cc" id="mk-world-cc">
+                    <select name="cc" id="mk-world-cc" required>
                         {% for class in mk_world.engine_classes %}
                         <option id="class-{{ forloop.counter }}" value="{{ class.engine_class_id }}">{{ class.name }}</option>
                         {% endfor %}
                     </select><br>
                     <label for="mk-world-teams">No. Teams</label>
-                    <input type="number" name="no-teams" id="mk-world-teams"><br>
+                    <input type="number" name="no-teams" id="mk-world-teams" value=0 min=0 max=4 required><br>
                     <label for="mk-world-item-rule">Item Rules</label>
-                    <select name="item-rule" id="mk-world-item-rule">
+                    <select name="item-rule" id="mk-world-item-rule" required>
                         {% for rule in mk_world.item_rules %}
                         <option id="rule-{{ forloop.counter }}" value="{{ rule.item_rule_id }}">{{ rule.name }}</option>
                         {% endfor %}
                     </select><br>
                     <label for="mk-world-difficulty">COM Difficulty</label>
-                    <select name="difficulty" id="mk-world-difficulty">
+                    <select name="difficulty" id="mk-world-difficulty" required>
                         {% for difficulty in mk_world.cpu_difficulties %}
                         <option id="difficulty-{{ forloop.counter }}" value="{{ difficulty.cpu_difficulty_id }}">{{ difficulty.name }}</option>
                         {% endfor %}
                     </select><br>
                     <label for="mk-world-no-players">No. Players</label>
-                    <input type="number" name="no-players" id="mk-world-no-players"><br>
+                    <input type="number" name="no-players" id="mk-world-no-players" min=1 max=4 required><br>
                     <label for="mk-world-no-races">No. Races</label>
-                    <input type="number" name="no-races" id="mk-world-no-races">
+                    <input type="number" name="no-races" id="mk-world-no-races" min=1 required>
                 </fieldset>
             </form>
         </div>

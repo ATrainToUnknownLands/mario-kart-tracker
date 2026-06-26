@@ -272,11 +272,12 @@ def save_race_results(request):
 
 
 def get_player_defaults(request):
+    # Get the player and game version
     player_id = request.GET.get('player_id')
     game_version_name = request.GET.get('game_version')
-
     game_version = GameVersion.objects.filter(short_name = game_version_name).first()
 
+    # Get the defaults model object
     defaults_raw = PlayerDefault.objects.filter(
         player_id = player_id,
         game_version = game_version
@@ -295,6 +296,7 @@ def get_player_defaults(request):
             else:
                 defaults[field] = attr
     else:
+        # If there aren't any defaults, just return nothing
         print("No defaults")
         raise Http404("No defaults for this game for this player")
     
