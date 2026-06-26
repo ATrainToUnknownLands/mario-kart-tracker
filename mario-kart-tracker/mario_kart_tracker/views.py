@@ -277,13 +277,23 @@ def get_player_defaults(request):
 
     game_version = GameVersion.objects.filter(short_name = game_version_name).first()
 
-    defaults = PlayerDefault.objects.filter(
+    defaults_raw = PlayerDefault.objects.filter(
         player_id = player_id,
         game_version = game_version
     ).first()
 
-    if defaults:
-        defaults = model_to_dict(defaults, fields=["character", "vehicle", "wheel", "glider"])
+    if defaults_raw:
+        # Return only the relevant fields
+        fields = ["character", "vehicle", "wheel", "glider"]
+        defaults = {}
+        # We want the text representation (the name), not the id, so we need to 
+        # get the "name" field for each model
+        for field in fields:
+            attr = getattr(defaults_raw, field, False)
+            if attr:
+                defaults[field] = attr.name
+            else:
+                defaults[field] = attr
     else:
         print("No defaults")
         raise Http404("No defaults for this game for this player")
