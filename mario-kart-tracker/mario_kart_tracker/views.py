@@ -8,8 +8,6 @@ from .utils import *
 
 import re
 
-# TODO: implement form verification
-
 def index(request):
     return HttpResponse("Hello World. This is the Mario Kart Tracker index!")
 
