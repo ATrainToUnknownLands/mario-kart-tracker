@@ -7,7 +7,8 @@
         <title>Race No. {{ race_no }}</title>
     </head>
     <body>
-        <form action="{% url "mk-tracker:save-race" %}" method="post">
+        <!-- TODO: If race result details have already been entered, show them -->
+        <form id="race-entry" method="post">
             {% csrf_token %}
             <input type="hidden" name="session" value="{{ session.session_id }}">
             <input type="hidden" name="race-no" value="{{ race_no }}">
@@ -23,12 +24,14 @@
                 <label for="start-track">Ending Track</label>
                 <input type="text" name="end-track" id="end-race-track" list="tracks"><br>
             {% endif %}
-            {% for player in players %}
-                <label for="player-{{ player.player_id }}-position">{{ player.name }}</label>
-                <input type="number" name="player-{{ player.player_id }}-position" id="player-{{ player.player_id }}-position"><br>
+
+            {% for player_session in player_sessions %}
+                <label for="player-{{ player_session.player.player_id }}-position">{{ player_session.player.name }}</label>
+                <input class="position-select" type="number" name="player-{{ player_session.player.player_id }}-position" id="player-{{ player_session.player.player_id }}-position" max={{max_position}} min=1><br>
             {% endfor %}
-            <!-- TODO: Implement a "previous" button -->
-            <input type="submit" value="Next">
+            
+            <button type="button" id="previous-race">Previous</button>
+            <button type="button" id="submit-race">Next</button>
         </form>
     </body>
 
@@ -37,4 +40,10 @@
             <option value="{{ track.name }}">{{ track.name }}</option>
         {% endfor %}
     </datalist>
+
+    <script>
+        const NEXT_RACE_URL = '{% url "mk-tracker:next-race" %}'
+        const PREV_RACE_URL = '{% url "mk-tracker:prev-race" %}'
+    </script>
+    <script src="{% static 'mario_kart_tracker/race-entry.js' %}"></script>
 </html>

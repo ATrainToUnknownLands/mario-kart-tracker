@@ -6,7 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django.utils import timezone
+from django.utils import timezone, dateformat
 
 
 class GameVersion(models.Model):
@@ -318,6 +318,9 @@ class Session(models.Model):
         db_table = 'session'
         db_table_comment = 'The settings for a single VS Race session of Mario Kart. Not all settings apply to every version of the game. Does not apply to other race types (e.g. Grand Prix).\n\n  Assumes that a session is incomplete until updated, and that a session only takes place on a single calendar day.'
 
+    def __str__(self):
+        return self.game_version.name + f" Session ({dateformat.format(timezone.localtime(self.play_date), "Y-m-d")})"
+
 
 class PlayerSession(models.Model):
     player_session_id = models.AutoField(primary_key=True, db_comment='Primary key')
@@ -362,7 +365,6 @@ class PlayerSession(models.Model):
         unique_together = (('session', 'player'),)
         db_table_comment = 'Selections made by a player during session setup. Selections from the `player_default` table will be re-entered, rather than inserting a reference.'
 
-
 class Race(models.Model):
     race_id = models.AutoField(primary_key=True, db_comment='Primary key')
     session = models.ForeignKey(
@@ -394,6 +396,13 @@ class Race(models.Model):
         unique_together = (('session', 'race_no'),)
         db_table_comment = 'Stores the details of each race within a session. \n  \n  For Mario Kart 8, only `start_track_id` should be completed. For Mario Kart World, `end_track_id` may be null (indicates that it was a single-track race).'
 
+    def __str__(self):
+        rep = self.start_track.name
+
+        if self.end_track:
+            rep = rep + f"- {self.end_track.name}"
+        
+        return rep
 
 class RaceResult(models.Model):
     race_result_id = models.AutoField(primary_key=True, db_comment='Primary key')
@@ -402,10 +411,10 @@ class RaceResult(models.Model):
         on_delete=models.DO_NOTHING, 
         db_comment='The race for which this result is for'
     )
-    player = models.ForeignKey(
-        to=Player, 
+    player_session = models.ForeignKey(
+        to=PlayerSession, 
         on_delete=models.DO_NOTHING, 
-        db_comment='The player for which this result is for'
+        db_comment='The player-session for which this result is for'
     )
     position = models.ForeignKey(
         to=Position, 
@@ -416,5 +425,8 @@ class RaceResult(models.Model):
     class Meta:
         managed = False
         db_table = 'race_result'
-        unique_together = (('race', 'player'),)
+        unique_together = (('race', 'player_session'),('race', 'position'))
         db_table_comment = 'Stores the results of races for each player. Given that positions are tied to points, a foreign key relationship is required."'
+
+    def __str__(self):
+        return str(self.race) + ": " + self.player.name + "'s Result"
