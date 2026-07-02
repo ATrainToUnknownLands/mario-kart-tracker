@@ -67,11 +67,8 @@ def save_race_results(request):
             ).first()
             if not result:
                 ValueError("No position found")
-
-            print(race)
             
             # Save the player results
-            # TODO: update to reference player_session model
             race_result = RaceResult.objects.update_or_create(
                 race = race, player_session = player,
                 defaults={"position": result}

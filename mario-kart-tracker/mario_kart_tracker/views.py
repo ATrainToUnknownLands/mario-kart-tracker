@@ -177,7 +177,6 @@ def start_new_session(request):
 
 from django.db.models import Max
 
-# TODO: If a race result has been entered, return the previously entered details
 def race_entry(request, session_id, race_no):
     print(f"session_id: {session_id}, race_no: {race_no}")
 
@@ -185,9 +184,22 @@ def race_entry(request, session_id, race_no):
     session = Session.objects.get(pk=session_id)
     tracks = Track.objects.filter(game_version=session.game_version)
 
+    # Get existing race results
+    existing_race = Race.objects.filter(session=session, race_no=race_no).first()
+
     # Get the players
+    players = []
     player_sessions = PlayerSession.objects.filter(session=session)
-    print(player_sessions)
+    for player_session in player_sessions:
+        player_context = {}
+        player_context["player_session"] = player_session
+        # If the race has already been entered (the user is returning to the page),
+        # Get the positions of the players (if they exist)
+        if existing_race:
+            race_result = RaceResult.objects.filter(race=existing_race, player_session=player_session).first()
+            if race_result:
+                player_context["result"] = race_result
+        players.append(player_context)
 
     # Get the positions
     positions = Position.objects.filter(game_version=session.game_version)
@@ -200,9 +212,10 @@ def race_entry(request, session_id, race_no):
         "race_no": race_no,
         "session": session,
         "tracks": tracks,
-        "player_sessions": player_sessions,
+        "players": players,
         "positions": positions,
-        "max_position": max_position["position__max"]
+        "max_position": max_position["position__max"],
+        "result_tracks": existing_race
     }
 
     # Return the rendered page
@@ -241,10 +254,12 @@ def next_race(request):
 
 
 def previous_race(request):
-    # TODO: If no results have been entered, skip over saving, it doesn't matter
-    saved = save_race_results(request)
-    if not saved:
-        raise Exception("Something went wrong!")
+    if request.POST.get("start-track"):
+        saved = save_race_results(request)
+        if not saved:
+            raise Exception("Something went wrong!")
+    else:
+        print("Nothing to save")
 
     # Get the session
     session = Session.objects.get(pk=request.POST.get("session"))

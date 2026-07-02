@@ -7,7 +7,6 @@
         <title>Race No. {{ race_no }}</title>
     </head>
     <body>
-        <!-- TODO: If race result details have already been entered, show them -->
         <form id="race-entry" method="post">
             {% csrf_token %}
             <input type="hidden" name="session" value="{{ session.session_id }}">
@@ -19,15 +18,16 @@
                     Starting Track
                 {% endif %}
             </label>
-            <input type="text" name="start-track" id="start-race-track" list="tracks"><br>
+            <input type="text" name="start-track" id="start-race-track" list="tracks" value="{% if result_tracks %}{{ result_tracks.start_track.name }}{% endif %}"><br>
             {% if session.game_version.name == "Mario Kart World" %}
                 <label for="start-track">Ending Track</label>
-                <input type="text" name="end-track" id="end-race-track" list="tracks"><br>
+                <input type="text" name="end-track" id="end-race-track" list="tracks" value="{% if result_tracks %}{{ result_tracks.end_track.name }}{% endif %}"><br>
             {% endif %}
 
-            {% for player_session in player_sessions %}
-                <label for="player-{{ player_session.player.player_id }}-position">{{ player_session.player.name }}</label>
-                <input class="position-select" type="number" name="player-{{ player_session.player.player_id }}-position" id="player-{{ player_session.player.player_id }}-position" max={{max_position}} min=1><br>
+            {% for player in players %}
+                <label for="player-{{ player.player_session.player.player_id }}-position">{{ player.player_session.player.name }}</label>
+                <input class="position-select" type="number" name="player-{{ player.player_session.player.player_id }}-position" id="player-{{ player.player_session.player.player_id }}-position" max={{max_position}} min=1
+                    value={{player.result.position.position}}><br>
             {% endfor %}
             
             <button type="button" id="previous-race">Previous</button>
