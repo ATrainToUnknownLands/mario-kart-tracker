@@ -429,4 +429,4 @@ class RaceResult(models.Model):
         db_table_comment = 'Stores the results of races for each player. Given that positions are tied to points, a foreign key relationship is required."'
 
     def __str__(self):
-        return str(self.race) + ": " + self.player.name + "'s Result"
+        return str(self.race) + ": " + self.player_session.player.name + "'s Result"

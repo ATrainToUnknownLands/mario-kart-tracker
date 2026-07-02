@@ -59,7 +59,8 @@ def save_race_results(request):
     for form_item in list(request.POST.items()):
         if re.match(r"player-\d+-position", form_item[0]):
             player_id = re.search(r"\d+", form_item[0]).group()
-            player = Player.objects.get(pk=int(player_id))
+            player = PlayerSession.objects.filter(session = session, player_id = player_id).first()
+
             result = Position.objects.filter(
                 game_version = session.game_version,
                 position = int(form_item[1])
@@ -70,8 +71,9 @@ def save_race_results(request):
             print(race)
             
             # Save the player results
+            # TODO: update to reference player_session model
             race_result = RaceResult.objects.update_or_create(
-                race = race, player = player,
+                race = race, player_session = player,
                 defaults={"position": result}
             )
 

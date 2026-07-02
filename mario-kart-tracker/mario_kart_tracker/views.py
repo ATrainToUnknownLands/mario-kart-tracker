@@ -214,7 +214,6 @@ Save the results of a particular race.
 Saves the track(s) on which the race occurred, and the results for each player
 '''
 def next_race(request):
-    print("Called next race view")
     saved = save_race_results(request)
     if not saved:
         raise Exception("Something went wrong!")

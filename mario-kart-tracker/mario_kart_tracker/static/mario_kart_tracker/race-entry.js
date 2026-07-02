@@ -28,7 +28,7 @@ function formIsValid(form){
 function submitData(form, path){
     form.attr("action", path);
     formIsValid(form)
-    // form.submit();
+    form.submit();
 }
 
 $(document).ready(function(){
