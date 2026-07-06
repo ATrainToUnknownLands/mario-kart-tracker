@@ -30,7 +30,6 @@
                         <option id="track-choice-{{ forloop.counter }}" value="{{ track_choice.course_selection_id }}">{{ track_choice.name }}</option>
                         {% endfor %}
                     </select><br>
-                    <!-- TODO: Add in vehicle options -->
                     <label for="mk8-cc">CC</label>
                     <select name="cc" id="mk8-cc" required>
                         {% for class in mk8.engine_classes %}

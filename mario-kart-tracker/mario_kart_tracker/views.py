@@ -9,7 +9,7 @@ from .utils import *
 import re
 
 def index(request):
-    return HttpResponse("Hello World. This is the Mario Kart Tracker index!")
+    return render(request, "mario_kart_tracker/index.html")
 
 
 def player_list(request):
@@ -46,7 +46,7 @@ def save_player(request):
 
     new_id = new_player.player_id
 
-    return HttpResponseRedirect(f'../player/{new_id}')
+    return HttpResponseRedirect(reverse("mk-tracker:player-setup", kwargs={"player_id": new_id}))
 
 
 def save_player_default(request):
@@ -85,7 +85,7 @@ def save_player_default(request):
         }
     )
 
-    return HttpResponse(f"Defaults saved!")
+    return HttpResponseRedirect(reverse("mk-tracker:player-setup", kwargs={"player_id": player.player_id}))
 
 
 def session_setup(request):
@@ -125,6 +125,11 @@ def start_new_session(request):
     no_races        = request.POST.get("no-races")
     no_teams        = request.POST.get("no-teams")
 
+    if request.POST.get("com-vehicles"):
+        vehicle_option = VehicleOption.objects.get(pk=request.POST.get("com-vehicles"))
+    else:
+        vehicle_option = None
+
     new_session = Session(
         no_players = no_players,
         game_version = game,
@@ -132,6 +137,7 @@ def start_new_session(request):
         engine_class = engine_class,
         teams = no_teams,
         item_rule = item_rule,
+        vehicle_option = vehicle_option,
         cpu_difficulty = com_difficulty,
         course_selection = track_choice
     )
@@ -175,7 +181,9 @@ def start_new_session(request):
 
         player_session_ids.append(player_session.player_session_id)
 
-    return HttpResponseRedirect(f"./session/{new_session.session_id}/1")
+    return HttpResponseRedirect(reverse("mk-tracker:race-entry", kwargs={
+        "session_id": new_session.session_id, 
+        "race_no": 1}))
 
 from django.db.models import Max
 
@@ -252,7 +260,7 @@ def next_race(request):
         session.save()
 
         # Then send the user to the finished screen
-        return HttpResponse("Session completed. Thanks for playing!")
+        return render(request, "mario_kart_tracker/session-finished.html")
 
 
 def previous_race(request):

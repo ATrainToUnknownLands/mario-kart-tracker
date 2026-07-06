@@ -1,0 +1,12 @@
+<html>
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mario Kart Tracker</title>
+    </head>
+    <body>
+        <button onclick='location.href="{% url "mk-tracker:new-session" %}"'>New Session</button><br>
+        <button onclick='location.href="{% url "mk-tracker:player-list" %}"'>Manage Players</button>
+    </body>
+</html>

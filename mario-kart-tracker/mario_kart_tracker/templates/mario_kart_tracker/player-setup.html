@@ -15,6 +15,7 @@
             <form id="form-player-details" action="{% url 'mk-tracker:save-player' %}" method="post">
                 {% csrf_token %}
                 <fieldset>
+                    <legend>Player</legend>
                     <label for="player-name">Name</label>
                     <input type="text" id="player-name" name="player-name" value="{% if player %}{{ player.name }}{% else %}{% endif %}">
                     <input type="submit" value="Save">
@@ -24,6 +25,7 @@
                 <form id="form-mk8-defaults" action="{% url "mk-tracker:save-player-default" %}" method="post">
                 {% csrf_token %}
                     <fieldset>
+                        <legend>Mario Kart 8 Deluxe</legend>
                         <input type="hidden" name="default-game" value="{{ mk8.game_version_id }}">
                         <input type="hidden" name="default-player" value="{{ player.player_id }}">
                         <label for="mk8-default-character">Character</label>
@@ -60,6 +62,7 @@
                 <form id="form-mk-world-defaults" action="{% url "mk-tracker:save-player-default" %}" method="post">
                 {% csrf_token %}
                     <fieldset>
+                        <legend>Mario Kart World</legend>
                         <input type="hidden" name="default-game" value="{{ mk_world.game_version_id }}">
                         <input type="hidden" name="default-player" value="{{ player.player_id }}">
                         <label for="mk-world-default-character">Character</label>
@@ -81,6 +84,8 @@
                 </form>
             {% endif %}
         </div>
+        <button onclick="location.href='{% url "mk-tracker:player-list" %}'">Player List</button>
+        <button onclick="location.href='{% url "mk-tracker:index" %}'">Main Menu</button>
         {% include "./datalists.html" %}
     </body>
 </html>

@@ -37,8 +37,8 @@
 
     <datalist id="tracks">
         {% for track in tracks %}
-            <option value="{{ track.name }}">{{ track.name }}</option>
-        {% endfor %}
+            <option value="{% autoescape on %}{{ track.name }}{% endautoescape %}">{{ track.name }}</option>
+        {% endfor %}        
     </datalist>
 
     <script>

@@ -12,13 +12,13 @@ function formIsValid(form){
     let selectedStartTrack = $("#start-race-track").val()
     let selectedEndTrack = $("#end-race-track").val()
 
-    let startExists = 0 != $(`#tracks option[value='${selectedStartTrack}']`).length;
+    let startExists = 0 != $(`#tracks option[value="${selectedStartTrack}"]`).length;
     if(!startExists){ 
         console.log("Track doesn't exist!") 
         return false 
     }
     
-    let endExists = 0 != $(`#tracks option[value='${selectedEndTrack}']`).length;
+    let endExists = 0 != $(`#tracks option[value="${selectedEndTrack}"]`).length;
     if(!startExists){
         console.log("Track doesn't exist!") 
         return false 

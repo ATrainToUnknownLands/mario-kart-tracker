@@ -313,23 +313,22 @@ class Session(models.Model):
         on_delete=models.DO_NOTHING, 
         db_comment='The engine class selected for the session.'
     )
-    vehicle_option = models.ForeignKey(
-        to=VehicleOption,
-        on_delete=models.DO_NOTHING,
-        db_comment='The types of vehicles that may be used by the CPU for this session. Applies to MK 8 Deluxe only.'
-    )
     teams = models.IntegerField(db_comment='How many teams of racers were selected for this session. 0 indicates no teams.')
     item_rule = models.ForeignKey(
         to=ItemRule, 
         on_delete=models.DO_NOTHING, 
         db_comment='The selected item rules for this session.'
     )
+    vehicle_option = models.ForeignKey(
+        to=VehicleOption,
+        on_delete=models.DO_NOTHING,
+        db_comment='The types of vehicles that may be used by the CPU for this session. Applies to MK 8 Deluxe only.'
+    )
     cpu_difficulty = models.ForeignKey(
         to=CpuDifficulty, 
         on_delete=models.DO_NOTHING, 
         db_comment='The CPU difficulty level selected for this session.'
     )
-    vehicle_selection = models.TextField(blank=True, null=True, db_comment='The types of vehicles that may be used by the CPU for this session. Applies to MK 8 Deluxe only.')
     course_selection = models.ForeignKey(
         to=CourseSelection, 
         on_delete=models.DO_NOTHING, 
