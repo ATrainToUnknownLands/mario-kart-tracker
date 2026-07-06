@@ -95,11 +95,13 @@ def session_setup(request):
         key_name = game.short_name
         context[key_name] = get_game_context(game)
 
-        # Get the Course Selection Mode, Item Rules, Engine Classes, and Difficulties
+        # Get the Course Selection Mode, Item Rules, Engine Classes, Vehicle Options, and Difficulties
         context[key_name]["track_modes"] = CourseSelection.objects.filter(game_version=game)
         context[key_name]["item_rules"] = ItemRule.objects.filter(game_version=game)
         context[key_name]["engine_classes"] = EngineClass.objects.filter(game_version=game)
+        context[key_name]["vehicle_options"] = VehicleOption.objects.filter(game_version=game)
         context[key_name]["cpu_difficulties"] = CpuDifficulty.objects.filter(game_version=game)
+        print(context[key_name]["vehicle_options"])
 
     players = Player.objects.all()
 

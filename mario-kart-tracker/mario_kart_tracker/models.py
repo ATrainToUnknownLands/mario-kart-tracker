@@ -99,6 +99,25 @@ class EngineClass(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class VehicleOption(models.Model):
+    vehicle_option_id = models.AutoField(primary_key=True, db_comment='Primary key')
+    name = models.TextField(db_comment='The name of the CPU vehicle option regime')
+    game_version = models.ForeignKey(
+        to=GameVersion,
+        on_delete=models.DO_NOTHING,
+        db_comment='The game version in which this vehicle option regime applies'
+    )
+
+    class Meta:
+        managed = False
+        db_table = 'vehicle_option'
+        unique_together = (('game_version', 'name'))
+        db_table_comment = 'Stores the options for vehicle types of the CPU players. Only applies to Mario Kart 8 Deluxe'
+
+    def __str__(self):
+        return self.name
 
 
 class Glider(models.Model):
@@ -293,6 +312,11 @@ class Session(models.Model):
         to=EngineClass, 
         on_delete=models.DO_NOTHING, 
         db_comment='The engine class selected for the session.'
+    )
+    vehicle_option = models.ForeignKey(
+        to=VehicleOption,
+        on_delete=models.DO_NOTHING,
+        db_comment='The types of vehicles that may be used by the CPU for this session. Applies to MK 8 Deluxe only.'
     )
     teams = models.IntegerField(db_comment='How many teams of racers were selected for this session. 0 indicates no teams.')
     item_rule = models.ForeignKey(

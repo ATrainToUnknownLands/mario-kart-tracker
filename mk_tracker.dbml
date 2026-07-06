@@ -31,7 +31,7 @@ Table engine_class as cc {
   game_version_id int [not null, note: "The game version in which this engine class appears. Needed for filtering which options are available"]
 
   Indexes {
-    (engine_class_id) [pk, name: "pk_character"]
+    (engine_class_id) [pk, name: "pk_engine_class"]
     (game_version_id, name) [unique, name: "nk_engine_class", note: "The same engine class may appear in multiple games, so a unique constraint including the game version is necessary. Conversely, a given engine class may not appear in a given game."]
   }
 
@@ -39,6 +39,21 @@ Table engine_class as cc {
 }
 
 Ref engine_class_in_game_version: engine_class.game_version_id > game_version.game_version_id
+
+Table vehicle_option as vo {
+  vehicle_option_id int [increment, note: "Primary key"]
+  name text [not null, note: "The name of the CPU vehicle option regime"]
+  game_version_id int [not null, note: "The game version in which this vehicle option regime applies"]
+
+  Indexes {
+    (vehicle_option_id) [pk, name: "pk_vehicle_option"]
+    (game_version_id, name) [unique, name: "nk_vehicle_option", note: "At time of creation, vehicle options only apply to Mario Kart 8, but to ensure flexibility, we include game version in the natural key."]
+  }
+
+  Note: "Stores the options for vehicle types of the CPU players. Only applies to Mario Kart 8 Deluxe"
+}
+
+Ref fk_vehicle_option_in_game_version: vo.game_version_id > game_version.game_version_id
 
 Table vehicle {
   vehicle_id int [increment, note: "Primary key"]
@@ -145,7 +160,7 @@ Table session {
   teams int [not null, note: "How many teams of racers were selected for this session. 0 indicates no teams."]
   item_rule_id int [not null, note: "The selected item rules for this session."]
   cpu_difficulty_id int [not null, note: "The CPU difficulty level selected for this session."]
-  vehicle_selection text [note: "The types of vehicles that may be used by the CPU for this session. Applies to MK 8 Deluxe only."]
+  vehicle_option_id int [note: "The types of vehicles that may be used by the CPU for this session. Applies to MK 8 Deluxe only."]
   course_selection_id int [not null, note: "The course selection regime selected for this session."]
   image_name text [note: "The name of the image file showing the selections made"] 
 
@@ -163,6 +178,7 @@ Ref fk_cc_of_session: session.engine_class_id > cc.engine_class_id
 Ref fk_course_selection_of_session: session.course_selection_id > course_selection.course_selection_id
 Ref fk_item_rule_of_session: session.item_rule_id > item_rule.item_rule_id
 Ref fk_cpu_difficulty_of_session: session.cpu_difficulty_id > cpu_difficulty.cpu_difficulty_id
+Ref fk_vehicle_option_of_session: session.vehicle_option_id > vo.vehicle_option_id
 
 Table player {
   player_id int [increment, note: "Primary key"]
@@ -279,17 +295,18 @@ Ref position_for_game_version: position.game_version_id > game_version.game_vers
 Table race_result {
   race_result_id int [increment, note: "Primary key"]
   race_id int [not null, note: "The race for which this result is for"]
-  player_id int [not null, note: "The player for which this result is for"]
+  player_session_id int [not null, note: "The player-session for which this result is for"]
   position_id int [not null, note: "The position in which the player finished."]
   
   Indexes {
     (race_result_id) [pk, name: "pk_race_result"]
-    (race_id, player_id) [unique, name: "nk_race_result", note: "A player can only have one result per race, so a unique constraint on both race and player is required."]
+    (race_id, player_session_id) [unique, name: "nk_race_result", note: "A player can only have one result per race, so a unique constraint on both race and player is required."]
+    (race_id, position_id) [unique, name: "uq_race_position", note: "Constraint to ensure two players can't have the same position"]
   }
 
-  Note: '''Stores the results of races for each player. Given that positions are tied to points, a foreign key relationship is required."'''
+  Note: '''Stores the results of races for each player. Given that positions are tied to points, a foreign key relationship is required.'''
 }
 
 Ref fk_race_result_for_race: race_result.race_id > race.race_id
-Ref fk_race_result_for_player: race_result.player_id > player.player_id
+Ref fk_race_result_for_player: race_result.player_session_id > player_session.player_session_id
 Ref fk_position_for_race_result: race_result.position_id > position.position_id

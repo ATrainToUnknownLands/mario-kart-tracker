@@ -51,6 +51,12 @@
                         <option id="difficulty-{{ forloop.counter }}" value="{{ difficulty.cpu_difficulty_id }}">{{ difficulty.name }}</option>
                         {% endfor %}
                     </select><br>
+                    <label for="mk8-com-vehicles">COM Vehicles</label>
+                    <select name="com-vehicles" id="mk8-com-vehicles" required>
+                        {% for option in mk8.vehicle_options %}
+                        <option id="com-vehicle-{{ forloop.counter }}" value="{{ option.vehicle_option_id }}">{{ option.name }}</option>
+                        {% endfor %}
+                    </select><br>
                     <label for="mk8-no-players">No. Players</label>
                     <input type="number" name="no-players" id="mk8-no-players" min=1 max=4 required><br>
                     <label for="mk8-no-races">No. Races</label>
