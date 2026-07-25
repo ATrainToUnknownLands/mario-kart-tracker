@@ -26,6 +26,11 @@ class EngineClassAdmin(admin.ModelAdmin):
     list_display = ("name", "game_version")
 
 
+@admin.register(VehicleOption)
+class VehicleOptionAdmin(admin.ModelAdmin):
+    list_display = ("name", "game_version")
+
+
 @admin.register(Glider)
 class GliderAdmin(admin.ModelAdmin):
     pass

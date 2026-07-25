@@ -96,6 +96,7 @@ function get_player_defaults(event) {
         })
 }
 
+// TODO: Refactor to improve the code layout
 function add_player_fieldsets(input_element) {
     // Limit to only 4 players
     noPlayers = Math.min($(input_element).val(), 4);
@@ -113,7 +114,7 @@ function add_player_fieldsets(input_element) {
         let html = '';
         
         if(selectedGame == "mk8") {
-            html = `<fieldset name="player-settings">
+            html = `<fieldset id="mk8-player-settings-${player_no}" name="player-settings">
                 <legend>Player Settings: Player ${player_no}</legend>
                 <label for="mk8-player${player_no}">Player</label>
                 <select name="player-select${player_no}" id="mk8-player${player_no}" required></select><br>
@@ -130,7 +131,7 @@ function add_player_fieldsets(input_element) {
             </fieldset>`;
         }
         else if(selectedGame == "mk_world") {
-            html = `<fieldset name="player-settings">
+            html = `<fieldset id="mk-world-player-settings-${player_no}" name="player-settings">
                 <legend>Player Settings: Player ${player_no}</legend>
                 <label for="mk-world-player${player_no}">Player</label>
                 <select name="player-select${player_no}" id="mk-world-player${player_no}" required></select><br>
@@ -140,7 +141,12 @@ function add_player_fieldsets(input_element) {
                 <input type="text" name="player${player_no}-vehicle" id="mk-world-player${player_no}-vehicle" list="mk-world-vehicles" required>
             </fieldset>`;
         }
-        $(`#${selectedGameHtml}-session-setup`).append(html);
+        if(player_no == 1){
+            $(`#${selectedGameHtml}-no-players-set`).after(html);
+        } else {
+            $(`#${selectedGameHtml}-player-settings-${(player_no - 1)}`).after(html);
+        }
+        
         
         // When the player is selected, get the defaults
         let player_select = $(`#${selectedGameHtml}-player${player_no}`);

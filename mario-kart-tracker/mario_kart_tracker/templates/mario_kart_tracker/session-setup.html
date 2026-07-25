@@ -21,6 +21,10 @@
                 action="{% url "mk-tracker:save-session" %}" 
                 method="post">
                 {% csrf_token %}
+                <fieldset id="mk8-no-players-set" name="no-players-set">
+                    <legend>No. Players</legend>
+                    <input type="number" name="no-players" id="mk8-no-players" min=1 max=4 required>
+                </fieldset>
                 <fieldset name="mk8-setup">
                     <legend>Session Settings</legend>
                     <input type="hidden" name="game_version" value="{{ mk8.game_version_id }}">
@@ -56,8 +60,6 @@
                         <option id="com-vehicle-{{ forloop.counter }}" value="{{ option.vehicle_option_id }}">{{ option.name }}</option>
                         {% endfor %}
                     </select><br>
-                    <label for="mk8-no-players">No. Players</label>
-                    <input type="number" name="no-players" id="mk8-no-players" min=1 max=4 required><br>
                     <label for="mk8-no-races">No. Races</label>
                     <input type="number" name="no-races" id="mk8-no-races" min=1 required>
                 </fieldset>
@@ -70,6 +72,10 @@
                 action="{% url "mk-tracker:save-session" %}" 
                 method="post">
                 {% csrf_token %}
+                <fieldset id="mk-world-no-players-set" name="no-players-set">
+                    <legend>No. Players</legend>
+                    <input type="number" name="no-players" id="mk-world-no-players" min=1 max=4 required>
+                </fieldset>
                 <fieldset name="mk-world-setup">
                     <legend>Session Settings</legend>
                     <input type="hidden" name="game_version" value="{{ mk_world.game_version_id }}">
@@ -99,8 +105,6 @@
                         <option id="difficulty-{{ forloop.counter }}" value="{{ difficulty.cpu_difficulty_id }}">{{ difficulty.name }}</option>
                         {% endfor %}
                     </select><br>
-                    <label for="mk-world-no-players">No. Players</label>
-                    <input type="number" name="no-players" id="mk-world-no-players" min=1 max=4 required><br>
                     <label for="mk-world-no-races">No. Races</label>
                     <input type="number" name="no-races" id="mk-world-no-races" min=1 required>
                 </fieldset>
