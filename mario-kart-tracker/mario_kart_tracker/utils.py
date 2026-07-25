@@ -78,3 +78,24 @@ def save_race_results(request):
 
     # Everything worked fine, so return
     return True
+
+
+from django.db.models import Sum, F
+from django.db.models.functions import Coalesce
+
+'''
+Takes a session id and returns the current, cumulative points that each player has 
+received
+'''
+def get_points(session: Session):
+    if not session:
+        raise TypeError('get_points() requires a Session object')
+
+    results = PlayerSession.objects.filter(session=session)\
+        .annotate(
+            player_name = F('player__name'),
+            points = Coalesce(Sum('race_results__position__points'), 0)
+        )\
+        .order_by("-points")
+
+    return results

@@ -437,7 +437,8 @@ class RaceResult(models.Model):
     player_session = models.ForeignKey(
         to=PlayerSession, 
         on_delete=models.DO_NOTHING, 
-        db_comment='The player-session for which this result is for'
+        db_comment='The player-session for which this result is for',
+        related_name='race_results'
     )
     position = models.ForeignKey(
         to=Position, 

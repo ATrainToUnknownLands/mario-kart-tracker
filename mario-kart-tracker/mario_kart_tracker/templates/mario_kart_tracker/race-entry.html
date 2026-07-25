@@ -7,6 +7,7 @@
         <title>Race No. {{ race_no }}</title>
     </head>
     <body>
+        <h1>Race {{ race_no }} of {{ session.no_races }}</h1>
         <form id="race-entry" method="post">
             {% csrf_token %}
             <input type="hidden" name="session" value="{{ session.session_id }}">
@@ -33,6 +34,11 @@
             <button type="button" id="previous-race">Previous</button>
             <button type="button" id="submit-race">Next</button>
         </form>
+        <br>
+        <h2>Current Standings</h2>
+        {% for result in results_so_far %}
+            <label for="">{{result.player_name}}: </label><p>{{ result.points }}</p><br>
+        {% endfor %}
     </body>
 
     <datalist id="tracks">

@@ -190,9 +190,13 @@ from django.db.models import Max
 def race_entry(request, session_id, race_no):
     print(f"session_id: {session_id}, race_no: {race_no}")
 
+
     # Get the tracks for the game being played
     session = Session.objects.get(pk=session_id)
     tracks = Track.objects.filter(game_version=session.game_version)
+
+    # Get the results so far
+    results_so_far = get_points(session)
 
     # Get existing race results
     existing_race = Race.objects.filter(session=session, race_no=race_no).first()
@@ -225,7 +229,8 @@ def race_entry(request, session_id, race_no):
         "players": players,
         "positions": positions,
         "max_position": max_position["position__max"],
-        "result_tracks": existing_race
+        "result_tracks": existing_race,
+        "results_so_far": results_so_far
     }
 
     # Return the rendered page
@@ -262,7 +267,7 @@ def next_race(request):
         # Then send the user to the finished screen
         return render(request, "mario_kart_tracker/session-finished.html")
 
-
+# BUG: Failure on pressing previous race
 def previous_race(request):
     if request.POST.get("start-track"):
         saved = save_race_results(request)
