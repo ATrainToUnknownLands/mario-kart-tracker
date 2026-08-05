@@ -417,21 +417,20 @@ All foreign key relationships are listed below. All relationships are many-to-on
 ![ERD](ERD.jpg)
 
 ## 6. Design Notes
-1.  Game version as a filter key
+1.  Game version as a filter key\
 Reference tables (`character`, `vehicle`, `track`, `course_selection`, etc.) include a `game_version_id` column. This is intentional. It allows the application to filter available options based on the version of the game being played, rather than showing all options regardless of applicability. 
 
-
-2.  Wheel and glider tables have no game_version_id
+2.  Wheel and glider tables have no game_version_id\
 Wheels and gliders are specific to Mario Kart 8 Deluxe and do not vary between game versions in any meaningful way. However, the tables still reference `game_version_id` for two reasons: consistency, and to maximise future flexibility in case additional game versions are added that require these tables. Columns referencing `wheel_id` and `glider_id` in other tables are nullable for non-MK8D sessions.
 
-3.  Player defaults are copied, not referenced, at session time
+3.  Player defaults are copied, not referenced, at session time\
 When a session is set up, a player's default selections are re-entered into `player_session` rather than pointing to `player_default`. This ensures that race history remains accurate even if a player updates their defaults later.
 
-4.  Points are linked via position, not stored directly on `race_result`
+4.  Points are linked via position, not stored directly on `race_result`\
 Rather than storing a points value directly on `race_result`, the position_id column references the position table which maps positions to points per game version. This keeps point values consistent and avoids manual entry errors.
 
-5.  Natural keys alongside surrogate keys
+5.  Natural keys alongside surrogate keys\
 Each table uses an auto-increment surrogate primary key for simplicity, but also defines a natural key (unique constraint on the meaningful business columns) to prevent duplicate data. For example, `nk_character` enforces uniqueness on (`game_version_id`, `name`).
 
-6.  `teams` column stores a count, not a foreign key
+6.  `teams` column stores a count, not a foreign key\
 The number of teams in a session is stored as an integer (0 = no teams) rather than modelled as a separate table. Given the personal scope of the project, this simpler approach is sufficient.
