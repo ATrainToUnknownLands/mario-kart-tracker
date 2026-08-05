@@ -414,7 +414,7 @@ All foreign key relationships are listed below. All relationships are many-to-on
 
 ## 5. ERD
 
-![ERD](ERD.jpg)
+<iframe width="560" height="315" src='https://dbdiagram.io/e/69be1acd78c6c4bc7a34cfd7/6a72e54835ee2e87b036d8e6'> </iframe>
 
 ## 6. Design Notes
 1.  Game version as a filter key\
