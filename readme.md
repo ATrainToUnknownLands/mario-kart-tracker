@@ -11,7 +11,7 @@ This app is designed to record results of VS races in the video game *Mario Kart
 The ultimate aim of collecting this data was to explore and analyse it, including identifying trends amongst individual players (e.g. if a player does better on some tracks) and overall (e.g. frequency of tracks when selecting "Random").
 
 ## Data Modelling
-<iframe width="560" height="315" src='https://dbdiagram.io/e/69be1acd78c6c4bc7a34cfd7/6a72e54835ee2e87b036d8e6'> </iframe>
+![ERD](./database/Mario%20Kart%20Tracker%20v2.jpg)
 
 As stated earlier, the database was modelled and implemented prior to any Django development. I did this so that I could model the data explicitly and have finer control over the implementation, rather than simply relying on Django's ORM.
 
