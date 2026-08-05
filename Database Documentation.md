@@ -420,7 +420,7 @@ All foreign key relationships are listed below. All relationships are many-to-on
 1.  Game version as a filter key\
 Reference tables (`character`, `vehicle`, `track`, `course_selection`, etc.) include a `game_version_id` column. This is intentional. It allows the application to filter available options based on the version of the game being played, rather than showing all options regardless of applicability. 
 
-2.  Wheel and glider tables have no game_version_id\
+2.  Wheel and glider tables have `game_version_id`\
 Wheels and gliders are specific to Mario Kart 8 Deluxe and do not vary between game versions in any meaningful way. However, the tables still reference `game_version_id` for two reasons: consistency, and to maximise future flexibility in case additional game versions are added that require these tables. Columns referencing `wheel_id` and `glider_id` in other tables are nullable for non-MK8D sessions.
 
 3.  Player defaults are copied, not referenced, at session time\
