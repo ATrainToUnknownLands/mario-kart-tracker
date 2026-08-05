@@ -3,12 +3,12 @@
 
 ## Contents
 
-1. [Overview](#1.-overview)
-2. [Table Summary](#2.-table-dummary)
-3. [Table Reference](#3.-table-reference)
-4. [Relationships](#4.-relationships)
-5. [ERD](#5.-erd)
-6. [Design Notes](#6.-design-notes)
+1. [Overview](#1-overview)
+2. [Table Summary](#2-table-dummary)
+3. [Table Reference](#3-table-reference)
+4. [Relationships](#4-relationships)
+5. [ERD](#5-erd)
+6. [Design Notes](#6-design-notes)
 
 ## 1. Overview 
 MK Tracker is a personal project database designed to record and analyse the results of Mario Kart VS Race sessions. It supports multiple game versions, and tracks and session settings, player selections, race results, and point totals. The app primarily supports Mario Kart 8 Deluxe and Mario Kart World though the database has been designed with possible future additions in mind.
