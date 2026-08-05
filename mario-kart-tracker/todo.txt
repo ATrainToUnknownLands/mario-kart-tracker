@@ -3,8 +3,6 @@ TODO: Add cumulative points to each race
 TODO: Add points to the finishing screen
 TODO: Write a readme file
 TODO: Write a dev log
-FIXME: Correct misnamed tracks
-FIXME: Correct the console names so all track names are <track name> (<console>)
 BUG: Fix form validation on race entry
     - Needs to prevent submitting if an invalid track name is entered
 TODO: Race entry - onchange race result, update points
