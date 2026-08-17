@@ -4,7 +4,7 @@
 ## Contents
 
 1. [Overview](#1-overview)
-2. [Table Summary](#2-table-dummary)
+2. [Table Summary](#2-table-summary)
 3. [Table Reference](#3-table-reference)
 4. [Relationships](#4-relationships)
 5. [ERD](#5-erd)
@@ -270,7 +270,7 @@ Assumes that a session is incomplete until updated, and that a session only take
 | `teams` | `int` | No | — | — | Number of teams; 0 indicates no teams |
 | `item_rule_id` | `int` | No | FK | `item_rule.item_rule_id` | Item rule set selected for the session |
 | `cpu_difficulty_id` | `int` | No | FK | `cpu_difficulty.cpu_difficulty_id` | CPU difficulty level selected |
-| `vehicle_selection` | `text` | Yes | — | — | CPU vehicle types allowed — MK 8 Deluxe only (optional) |
+| `vehicle_selection_id` | `int` | Yes | — | — | CPU vehicle types allowed — MK 8 Deluxe only (optional) |
 | `course_selection_id` | `int` | No | FK | `course_selection.course_selection_id` | Course selection regime used |
 | `image_name` | `text` | Yes | — | — | Filename of an image showing session selections (optional) |
 
@@ -293,7 +293,7 @@ Selections from the `player_default` table will be re-entered, rather than inser
 | `character_id` | `int` | No | FK | `character.character_id` | Character chosen for this session |
 | `vehicle_id` | `int` | No | FK | `vehicle.vehicle_id` | Vehicle chosen for this session |
 | `wheel_id` | `int` | Yes | FK | `wheel.wheel_id` | Wheels chosen — MK 8 Deluxe only (optional) |
-| glid`er_id | `int` | Yes | FK | `glider.glider_id` | Glider chosen — MK 8 Deluxe only (optional) |
+| `glider_id` | `int` | Yes | FK | `glider.glider_id` | Glider chosen — MK 8 Deluxe only (optional) |
 
 #### Indexes & Constraints
 | Index | Columns | Type |
