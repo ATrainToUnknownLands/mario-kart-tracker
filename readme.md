@@ -23,3 +23,13 @@ As stated earlier, the database was modelled and implemented prior to any Django
 Full database schema documentation, including table and relationship definitions and design rational can be found [here](./database/Database%20Documentation.md).
 
 The database was connected to Django's ORM primarily by using the `inspectdb` tool. This generated the first version of all the models. From there, any changes I made manually in both the database and `models.py`. I also made any changes necessary just for Django, e.g. `verbose_name_plural` for Django admin.
+
+## Data Migration
+
+This project is actually the second version of an app I created using Google Apps Script, using Google Sheets as a backend. 
+
+So that I didn't lose any data, I wanted to migrate the data from the old system to the new system. Since the old system was only built to support Mario Kart 8 Deluxe, this made it a fair bit easier.
+
+I did encounter some issues, though, specifically related to the mapping of values (American vs. British names, for example). 
+
+Full details of the migration can be found in the [Migration Guide](./data%20migration/Migration%20Guide.md) and [migration notebook](./data%20migration/data-migration.ipynb).
