@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.db import transaction
 from django.urls import reverse
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 from .models import *
 from .utils import *
@@ -190,7 +192,6 @@ from django.db.models import Max
 def race_entry(request, session_id, race_no):
     print(f"session_id: {session_id}, race_no: {race_no}")
 
-
     # Get the tracks for the game being played
     session = Session.objects.get(pk=session_id)
     tracks = Track.objects.filter(game_version=session.game_version)
@@ -227,17 +228,22 @@ def race_entry(request, session_id, race_no):
     # Get the last place position in the game (for form validation)
     max_position = positions.aggregate(Max("position"))
 
+    # Convert positions and results to JSON
+    pos_json = dict(positions.values_list('position', 'points'))
+    res_json = dict(results_so_far.values_list('player_id', 'points'))
+
     # Assemble the context
     context = {
         "race_no": race_no,
         "session": session,
         "tracks": tracks,
         "players": players,
-        "positions": positions,
+        "positions": pos_json,
         "max_position": max_position["position__max"],
         "result_tracks": existing_race,
         "previous_tracks": prev_race,
-        "results_so_far": results_so_far
+        "results_so_far": results_so_far,
+        "results_json": res_json
     }
 
     # Return the rendered page
@@ -278,7 +284,6 @@ def next_race(request):
         # Then send the user to the finished screen
         return render(request, "mario_kart_tracker/session-finished.html", context)
 
-# BUG: Failure on pressing previous race
 def previous_race(request):
     if request.POST.get("start-track"):
         saved = save_race_results(request)

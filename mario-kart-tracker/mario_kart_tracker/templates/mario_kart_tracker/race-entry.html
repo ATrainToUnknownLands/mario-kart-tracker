@@ -33,7 +33,11 @@
 
             {% for player in players %}
                 <label for="player-{{ player.player_session.player.player_id }}-position">{{ player.player_session.player.name }}</label>
-                <input class="position-select" type="number" name="player-{{ player.player_session.player.player_id }}-position" id="player-{{ player.player_session.player.player_id }}-position" max={{max_position}} min=1
+                <input class="position-select" 
+                    type="number" 
+                    name="player-{{ player.player_session.player.player_id }}-position" 
+                    id="player-{{ player.player_session.player.player_id }}-position" 
+                    min=1 max={{max_position}}
                     value={{player.result.position.position}}><br>
             {% endfor %}
             
@@ -43,7 +47,7 @@
         <br>
         <h2>Current Standings</h2>
         {% for result in results_so_far %}
-            <label for="">{{result.player_name}}: </label><p>{{ result.points }}</p><br>
+            <label for="">{{result.player_name}}: </label><p id="player-{{ result.player.player_id }}-points">{{ result.points }}</p><br>
         {% endfor %}
     </body>
 
@@ -53,9 +57,18 @@
         {% endfor %}        
     </datalist>
 
+    {{ positions|json_script:"position-data" }}
+    {{ results_json|json_script:"current-results-data"}}
+
     <script>
         const NEXT_RACE_URL = '{% url "mk-tracker:next-race" %}'
         const PREV_RACE_URL = '{% url "mk-tracker:prev-race" %}'
+        const POSITIONS = JSON.parse(document.getElementById("position-data").textContent)
+        const CURRENT_RESULTS = JSON.parse(document.getElementById("current-results-data").textContent)
+
+        // TODO: Handle when editing a previous race - points are added to the total
+        // E.g. A player has 25 points from 2 races, the user edits a previous race, changing a 1st to 2nd
+        // The 12 points are added to 25, making 37, rather than editing the 25 to make 22
     </script>
     <script src="{% static 'mario_kart_tracker/race-entry.js' %}"></script>
 </html>
