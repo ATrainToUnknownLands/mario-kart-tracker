@@ -14,21 +14,26 @@ function formIsValid(form){
 
     let startExists = 0 != $(`#tracks option[value="${selectedStartTrack}"]`).length;
     if(!startExists){ 
-        console.log("Track doesn't exist!") 
+        console.log("Start track doesn't exist!") 
         return false 
     }
     
     let endExists = 0 != $(`#tracks option[value="${selectedEndTrack}"]`).length;
-    if(!startExists){
-        console.log("Track doesn't exist!") 
+    if(!endExists){
+        console.log("End track doesn't exist!") 
         return false 
     }
+
+    return true
 }
 
 function submitData(form, path){
     form.attr("action", path);
-    formIsValid(form)
-    form.submit();
+    if(formIsValid(form)){
+        form.submit();
+    } else {
+        alert("Form invalid. Please correct.")
+    }
 }
 
 $(document).ready(function(){

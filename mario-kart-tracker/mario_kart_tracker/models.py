@@ -306,7 +306,12 @@ class Session(models.Model):
         db_comment='The date-time at which the session was played',
         default=timezone.now
     )
-    is_complete = models.BooleanField(blank=True, null=True, db_comment='Whether the session was completed. False indicates either that the session is not finished or was finished early. Defaults to `false` then updated on completion')
+    is_complete = models.BooleanField(
+        blank=True, 
+        null=True, 
+        default=False,
+        db_comment='Whether the session was completed. False indicates either that the session is not finished or was finished early. Defaults to `false` then updated on completion'
+    )
     no_races = models.IntegerField(db_comment='The number of races that were selected to be played in the session (regardless of how many were actually completed)')
     engine_class = models.ForeignKey(
         to=EngineClass, 

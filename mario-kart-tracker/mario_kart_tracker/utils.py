@@ -36,14 +36,18 @@ def save_race_results(request):
     # Get the race no.
     race_no = int(request.POST.get("race-no"))
 
+    # Grab track names, stripping whitespace if necessary
+    start_track_name = request.POST.get("start-track").strip()
+    end_track_name = request.POST.get("end-track").strip()
+
     # Get the track(s)
     start_track = Track.objects.filter(
         game_version = session.game_version,
-        name = request.POST.get("start-track")
+        name = start_track_name
     ).first()
     end_track = Track.objects.filter(
         game_version = session.game_version,
-        name = request.POST.get("end-track")
+        name = end_track_name
     ).first()
 
     # Save the race

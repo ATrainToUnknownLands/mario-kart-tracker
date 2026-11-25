@@ -201,6 +201,12 @@ def race_entry(request, session_id, race_no):
     # Get existing race results
     existing_race = Race.objects.filter(session=session, race_no=race_no).first()
 
+    # Get the previous race (for MK World, where tracks can be connected)
+    if race_no > 1:
+        prev_race = Race.objects.filter(session=session, race_no=(race_no - 1)).first()
+    else:
+        prev_race = None
+
     # Get the players
     players = []
     player_sessions = PlayerSession.objects.filter(session=session)
@@ -230,6 +236,7 @@ def race_entry(request, session_id, race_no):
         "positions": positions,
         "max_position": max_position["position__max"],
         "result_tracks": existing_race,
+        "previous_tracks": prev_race,
         "results_so_far": results_so_far
     }
 
@@ -264,8 +271,12 @@ def next_race(request):
         session.is_complete = True
         session.save()
 
+        results = get_points(session)
+
+        context = {"results": results}
+
         # Then send the user to the finished screen
-        return render(request, "mario_kart_tracker/session-finished.html")
+        return render(request, "mario_kart_tracker/session-finished.html", context)
 
 # BUG: Failure on pressing previous race
 def previous_race(request):

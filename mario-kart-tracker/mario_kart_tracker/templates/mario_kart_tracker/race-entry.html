@@ -19,10 +19,16 @@
                     Starting Track
                 {% endif %}
             </label>
-            <input type="text" name="start-track" id="start-race-track" list="tracks" value="{% if result_tracks %}{{ result_tracks.start_track.name }}{% endif %}"><br>
+                <input 
+                    type="text" 
+                    name="start-track" 
+                    id="start-race-track" 
+                    list="tracks" 
+                    value="{% if result_tracks %}{{result_tracks.start_track.name}}{% elif previous_tracks %}{{previous_tracks.end_track.name}}{% endif %}">
+                <br>             
             {% if session.game_version.name == "Mario Kart World" %}
                 <label for="start-track">Ending Track</label>
-                <input type="text" name="end-track" id="end-race-track" list="tracks" value="{% if result_tracks %}{{ result_tracks.end_track.name }}{% endif %}"><br>
+                <input type="text" name="end-track" id="end-race-track" list="tracks" value="{% if result_tracks %}{{result_tracks.end_track.name}}{% endif %}"><br>
             {% endif %}
 
             {% for player in players %}
